@@ -40,7 +40,7 @@ def render_image_preview(result):
                     st.download_button(
                         label=f"💾 Download Image {idx + 1}",
                         data=img_byte_arr,
-                        file_name=f"adsnap_generated_{idx + 1}.png",
+                        file_name=f"snapify_generated_{idx + 1}.png",
                         mime="image/png"
                     )
             else:

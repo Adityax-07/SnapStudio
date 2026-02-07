@@ -23,7 +23,7 @@ from services.erase_foreground import erase_foreground
 
 # Configure Streamlit page
 st.set_page_config(
-    page_title="AdSnap Studio",
+    page_title="Snapify",
     page_icon="🎨",
     layout="wide",
     initial_sidebar_state="expanded"
@@ -49,6 +49,7 @@ st.markdown(
                     linear-gradient(135deg,var(--bg-1) 0%, var(--bg-2) 60%);
         font-family: 'Inter', ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;
         color: #e6eef8;
+        font-style: italic;
         -webkit-font-smoothing:antialiased;
         -moz-osx-font-smoothing:grayscale;
     }
@@ -61,7 +62,7 @@ st.markdown(
         border:1px solid rgba(255,255,255,0.04);backdrop-filter: blur(10px);
         box-shadow: 0 8px 30px rgba(2,6,23,0.6), 0 2px 6px rgba(11,85,255,0.04);
     }
-    .floating-nav a{color:var(--muted);text-decoration:none;padding:8px 10px;border-radius:10px;font-weight:600}
+    .floating-nav a{color:var(--muted);text-decoration:none;padding:8px 10px;border-radius:10px;font-weight:600;font-style:italic}
     .floating-nav a.primary{background:linear-gradient(90deg,var(--accent-a),var(--accent-b));color:#021022;box-shadow:0 8px 30px rgba(124,58,237,0.12)}
 
     /* Card + glassmorphism */
@@ -76,7 +77,7 @@ st.markdown(
     .image-wrap{border-radius:12px;overflow:hidden}
 
     /* Buttons */
-    .stButton>button, .stDownloadButton>button{border-radius:12px;padding:10px 14px;border:none;font-weight:700;cursor:pointer;transition:transform .18s ease,box-shadow .18s ease}
+    .stButton>button, .stDownloadButton>button{border-radius:12px;padding:10px 14px;border:none;font-weight:700;cursor:pointer;transition:transform .18s ease,box-shadow .18s ease;font-style:italic}
     .stButton>button:hover, .stDownloadButton>button:hover{transform:translateY(-3px);box-shadow:0 12px 30px rgba(0,212,255,0.08),0 4px 12px rgba(124,58,237,0.04)}
     .stButton>button.primary{background:linear-gradient(90deg,var(--accent-a),var(--accent-b));color:#021022}
     .stDownloadButton>button{background: linear-gradient(90deg,var(--accent-a),var(--accent-b));color:#021022}
@@ -85,13 +86,24 @@ st.markdown(
     .stButton>button:active{transform:scale(.985)}
 
     /* Headings */
-    .hero{display:flex;align-items:center;gap:18px}
-    .hero h1{margin:0;font-size:34px;letter-spacing:0.6px;color:var(--accent-a);font-weight:800}
-    .hero p{margin:0;color:var(--muted);margin-top:4px}
+    .hero{display:flex;align-items:center;gap:18px;justify-content:center;flex-direction:column}
+    .floating-hero-box{background:rgba(15,23,42,0.6);border:1px solid rgba(0,212,255,0.15);border-radius:24px;padding:3rem 2.5rem;backdrop-filter:blur(20px);box-shadow:0 8px 32px rgba(0,212,255,0.06),0 0 1px rgba(255,255,255,0.1);animation:floatingBox 3s ease-in-out infinite;margin-bottom:1rem}
+    @keyframes floatingBox{0%,100%{transform:translateY(0px)}}
+    @keyframes floatingBox{50%{transform:translateY(-12px)}}
+    .hero h1{margin:0;font-size:34px;letter-spacing:0.6px;color:var(--accent-a);font-weight:800;font-style:italic}
+    .hero p{margin:0;color:var(--muted);margin-top:4px;font-style:italic}
 
     /* Fade-in */
     @keyframes fadeInUp{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
     .fade-in{opacity:0;animation:fadeInUp .6s ease forwards}
+
+    /* Logo scale animations */
+    @keyframes scaleIn{from{opacity:0;transform:scale(0.6) rotateX(45deg)}to{opacity:1;transform:scale(1) rotateX(0deg)}}
+    @keyframes scaleOut{from{opacity:1;transform:scale(1)}to{opacity:0;transform:scale(0.3)}}
+    @keyframes rotate{from{transform:rotateY(0deg)}to{transform:rotateY(360deg)}}
+    .logo-animate{animation:scaleIn .8s cubic-bezier(.34,.1,.68,.55) forwards;animation-delay:0.2s}
+    .logo-rotate{animation:rotate 8s linear infinite}
+    .logo-exit{animation:scaleOut .6s ease-out forwards}
 
     /* Responsive tweaks */
     @media (max-width:768px){
@@ -100,21 +112,6 @@ st.markdown(
         .card{padding:12px}
     }
     </style>
-    """,
-    unsafe_allow_html=True,
-)
-
-# Floating navigation HTML
-st.markdown(
-    """
-    <div class="floating-nav fade-in">
-        <a href="#" class="logo" style="font-weight:800;color:white">AdSnap</a>
-        <a href="#">Generate</a>
-        <a href="#">Product</a>
-        <a href="#">Fill</a>
-        <a href="#">Erase</a>
-        <a href="#" class="primary">Get API Key</a>
-    </div>
     """,
     unsafe_allow_html=True,
 )
@@ -246,14 +243,45 @@ def auto_check_images(status_container):
     return False
 
 def main():
-    # Styled header
+    # Styled header with animated logo in floating box
     st.markdown(
         """
         <div class="hero">
-            <img src="https://img.icons8.com/fluency/48/000000/artist-palette.png" alt="logo" />
-            <div>
-                <h1>AdSnap Studio</h1>
-                <p>Design and enhance product images with AI — fast, simple, beautiful.</p>
+            <div class="floating-hero-box">
+                <div style="text-align: center; margin-bottom: 0.5rem; display: flex; justify-content: center; align-items: center; gap: 1rem;">
+                    <svg class="logo-animate logo-rotate" width="100" height="100" viewBox="0 0 120 120" style="perspective: 1200px;">
+                        <!-- Rotating geometric logo -->
+                        <defs>
+                            <linearGradient id="logoGrad1" x1="0%" y1="0%" x2="100%" y2="100%">
+                                <stop offset="0%" style="stop-color:#00d4ff;stop-opacity:1" />
+                                <stop offset="100%" style="stop-color:#0099ff;stop-opacity:1" />
+                            </linearGradient>
+                            <linearGradient id="logoGrad2" x1="100%" y1="0%" x2="0%" y2="100%">
+                                <stop offset="0%" style="stop-color:#ff006e;stop-opacity:1" />
+                                <stop offset="100%" style="stop-color:#8338ec;stop-opacity:1" />
+                            </linearGradient>
+                            <filter id="glow">
+                                <feGaussianBlur stdDeviation="3" result="coloredBlur"/>
+                                <feMerge>
+                                    <feMergeNode in="coloredBlur"/>
+                                    <feMergeNode in="SourceGraphic"/>
+                                </feMerge>
+                            </filter>
+                        </defs>
+                        <!-- Center cube/diamond -->
+                        <g transform="translate(60,60)">
+                            <!-- Front face -->
+                            <polygon points="0,-35 35,0 0,35 -35,0" fill="url(#logoGrad1)" opacity="0.9" filter="url(#glow)"/>
+                            <!-- Back face shadow -->
+                            <polygon points="0,-30 30,0 0,30 -30,0" fill="url(#logoGrad2)" opacity="0.4" transform="translate(8,8)"/>
+                            <!-- Metallic stripes -->
+                            <line x1="-35" y1="0" x2="35" y2="0" stroke="#ffffff" stroke-width="2" opacity="0.6"/>
+                            <line x1="0" y1="-35" x2="0" y2="35" stroke="#ffffff" stroke-width="2" opacity="0.6"/>
+                        </g>
+                    </svg>
+                    <h1 style="font-style: italic; margin: 0; font-size: 3.5rem; background: linear-gradient(135deg, #00d4ff, #0099ff); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;">Snapify</h1>
+                </div>
+                <p style="font-style: italic; text-align: center; margin: 0.8rem 0 0 0; font-size: 1.1rem; color: #cbd5e1;">Design and enhance product images with AI — fast, simple, beautiful.</p>
             </div>
         </div>
         """,
