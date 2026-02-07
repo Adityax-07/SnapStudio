@@ -29,6 +29,96 @@ st.set_page_config(
     initial_sidebar_state="expanded"
 )
 
+# Futuristic theme: gradients, glassmorphism, floating motion, and micro-interactions
+st.markdown(
+    """
+    <style>
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;800&display=swap');
+    :root{
+        --bg-1:#050812; /* deep navy */
+        --bg-2:#071428; /* charcoal */
+        --glass: rgba(255,255,255,0.04);
+        --accent-a: #00d4ff; /* neon cyan */
+        --accent-b: #7c3aed; /* neon purple */
+        --muted: rgba(255,255,255,0.6);
+    }
+
+    html,body,[data-testid="stApp"]{
+        height:100%;
+        background: radial-gradient(600px 400px at 10% 10%, rgba(12,34,72,0.35), transparent 5%),
+                    linear-gradient(135deg,var(--bg-1) 0%, var(--bg-2) 60%);
+        font-family: 'Inter', ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;
+        color: #e6eef8;
+        -webkit-font-smoothing:antialiased;
+        -moz-osx-font-smoothing:grayscale;
+    }
+
+    /* Floating nav */
+    .floating-nav{
+        position:fixed;left:50%;top:18px;transform:translateX(-50%);z-index:9999;
+        display:flex;gap:12px;align-items:center;padding:10px 18px;border-radius:14px;
+        background: linear-gradient(180deg, rgba(255,255,255,0.03), rgba(255,255,255,0.015));
+        border:1px solid rgba(255,255,255,0.04);backdrop-filter: blur(10px);
+        box-shadow: 0 8px 30px rgba(2,6,23,0.6), 0 2px 6px rgba(11,85,255,0.04);
+    }
+    .floating-nav a{color:var(--muted);text-decoration:none;padding:8px 10px;border-radius:10px;font-weight:600}
+    .floating-nav a.primary{background:linear-gradient(90deg,var(--accent-a),var(--accent-b));color:#021022;box-shadow:0 8px 30px rgba(124,58,237,0.12)}
+
+    /* Card + glassmorphism */
+    .card{background:var(--glass);border-radius:16px;padding:18px;border:1px solid rgba(255,255,255,0.04);backdrop-filter: blur(10px);box-shadow: 0 10px 30px rgba(2,6,23,0.6);transition:transform .35s cubic-bezier(.2,.9,.2,1),box-shadow .35s,filter .35s;transform-origin:center;overflow:hidden}
+    .card:before{content:"";position:absolute;inset:0;margin:-1px;border-radius:18px;pointer-events:none;background:linear-gradient(90deg, rgba(0,212,255,0.03), rgba(124,58,237,0.03));mix-blend-mode:overlay}
+    .card:hover{transform:translateY(-10px) scale(1.01);box-shadow:0 18px 48px rgba(2,6,23,0.75),0 6px 20px rgba(12,36,100,0.06);filter:brightness(1.02)}
+
+    /* Floating animation */
+    @keyframes floaty {0%{transform:translateY(0)}50%{transform:translateY(-8px)}100%{transform:translateY(0)}}
+    .card.float{animation: floaty 6s ease-in-out infinite}
+
+    .image-wrap{border-radius:12px;overflow:hidden}
+
+    /* Buttons */
+    .stButton>button, .stDownloadButton>button{border-radius:12px;padding:10px 14px;border:none;font-weight:700;cursor:pointer;transition:transform .18s ease,box-shadow .18s ease}
+    .stButton>button:hover, .stDownloadButton>button:hover{transform:translateY(-3px);box-shadow:0 12px 30px rgba(0,212,255,0.08),0 4px 12px rgba(124,58,237,0.04)}
+    .stButton>button.primary{background:linear-gradient(90deg,var(--accent-a),var(--accent-b));color:#021022}
+    .stDownloadButton>button{background: linear-gradient(90deg,var(--accent-a),var(--accent-b));color:#021022}
+
+    /* Glow on focus/active */
+    .stButton>button:active{transform:scale(.985)}
+
+    /* Headings */
+    .hero{display:flex;align-items:center;gap:18px}
+    .hero h1{margin:0;font-size:34px;letter-spacing:0.6px;color:var(--accent-a);font-weight:800}
+    .hero p{margin:0;color:var(--muted);margin-top:4px}
+
+    /* Fade-in */
+    @keyframes fadeInUp{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
+    .fade-in{opacity:0;animation:fadeInUp .6s ease forwards}
+
+    /* Responsive tweaks */
+    @media (max-width:768px){
+        .floating-nav{left:10px;transform:none;right:10px}
+        .hero h1{font-size:24px}
+        .card{padding:12px}
+    }
+    </style>
+    """,
+    unsafe_allow_html=True,
+)
+
+# Floating navigation HTML
+st.markdown(
+    """
+    <div class="floating-nav fade-in">
+        <a href="#" class="logo" style="font-weight:800;color:white">AdSnap</a>
+        <a href="#">Generate</a>
+        <a href="#">Product</a>
+        <a href="#">Fill</a>
+        <a href="#">Erase</a>
+        <a href="#" class="primary">Get API Key</a>
+    </div>
+    """,
+    unsafe_allow_html=True,
+)
+
 # Load environment variables
 print("Loading environment variables...")
 load_dotenv(verbose=True)  # Add verbose=True to see loading details
@@ -56,6 +146,25 @@ def initialize_session_state():
         st.session_state.original_prompt = ""
     if 'enhanced_prompt' not in st.session_state:
         st.session_state.enhanced_prompt = None
+
+
+def safe_rerun():
+    """Safely trigger a Streamlit rerun.
+
+    Some Streamlit versions may not expose `st.experimental_rerun`. In that
+    case we fall back to updating query params with a timestamp which forces
+    the app to rerun in the browser.
+    """
+    try:
+        # Preferred method when available
+        st.experimental_rerun()
+    except Exception:
+        try:
+            # Fallback: tweak query params to force a rerun (use new API)
+            st.query_params = {"_rerun": int(time.time())}
+        except Exception:
+            # As a last resort, do nothing (can't force rerun)
+            pass
 
 def download_image(url):
     """Download image from URL and return as bytes."""
@@ -137,7 +246,19 @@ def auto_check_images(status_container):
     return False
 
 def main():
-    st.title("AdSnap Studio")
+    # Styled header
+    st.markdown(
+        """
+        <div class="hero">
+            <img src="https://img.icons8.com/fluency/48/000000/artist-palette.png" alt="logo" />
+            <div>
+                <h1>AdSnap Studio</h1>
+                <p>Design and enhance product images with AI — fast, simple, beautiful.</p>
+            </div>
+        </div>
+        """,
+        unsafe_allow_html=True,
+    )
     initialize_session_state()
     
     # Sidebar for API key
@@ -190,7 +311,7 @@ def main():
                             if result:
                                 st.session_state.enhanced_prompt = result
                                 st.success("Prompt enhanced!")
-                                st.experimental_rerun()  # Rerun to update the display
+                                safe_rerun()  # Rerun to update the display
                         except Exception as e:
                             st.error(f"Error enhancing prompt: {str(e)}")
                             
@@ -264,6 +385,27 @@ def main():
                 except Exception as e:
                     st.error(f"Error generating images: {str(e)}")
                     st.write("Full error:", str(e))
+        
+        # Display generated image (styled card)
+        if st.session_state.edited_image:
+            st.markdown('<div class="card">', unsafe_allow_html=True)
+            st.markdown('<div style="display:flex;justify-content:space-between;align-items:center;"><h3 style="margin:0">✨ Generated Image</h3></div>', unsafe_allow_html=True)
+            col1, col2 = st.columns([2, 1])
+            with col1:
+                st.markdown('<div class="image-wrap">', unsafe_allow_html=True)
+                st.image(st.session_state.edited_image, caption="Generated Image", use_container_width=True)
+                st.markdown('</div>', unsafe_allow_html=True)
+            with col2:
+                image_data = download_image(st.session_state.edited_image)
+                if image_data:
+                    st.download_button(
+                        "⬇️ Download Image",
+                        image_data,
+                        "generated_image.png",
+                        "image/png",
+                        key="generate_download"
+                    )
+            st.markdown('</div>', unsafe_allow_html=True)
     
     # Product Photography Tab
     with tabs[1]:
@@ -274,7 +416,7 @@ def main():
             col1, col2 = st.columns(2)
             
             with col1:
-                st.image(uploaded_file, caption="Original Image", use_column_width=True)
+                st.image(uploaded_file, caption="Original Image", use_container_width=True)
                 
                 # Product editing options
                 edit_option = st.selectbox("Select Edit Option", [
@@ -297,8 +439,7 @@ def main():
                             try:
                                 # First remove background if needed
                                 if force_rmbg:
-                                    from services.background_service import remove_background
-                                    bg_result = remove_background(
+                                    bg_result = erase_foreground(
                                         st.session_state.api_key,
                                         uploaded_file.getvalue(),
                                         content_moderation=content_moderation
@@ -542,14 +683,14 @@ def main():
                                                 
                                                 # Try automatic checking first
                                                 if auto_check_images(status_container):
-                                                    st.experimental_rerun()
+                                                    safe_rerun()
                                                 
                                                 # Add refresh button for manual checking
                                                 if refresh_container.button("🔄 Check for Generated Images"):
                                                     with st.spinner("Checking for completed images..."):
                                                         if check_generated_images():
                                                             status_container.success("✨ Image ready!")
-                                                            st.experimental_rerun()
+                                                            safe_rerun()
                                                         else:
                                                             status_container.warning(f"⏳ Still generating your image{'s' if len(urls) > 1 else ''}... Please check again in a moment.")
                                 except Exception as e:
@@ -643,14 +784,14 @@ def main():
                                                 
                                                 # Try automatic checking first
                                                 if auto_check_images(status_container):
-                                                    st.experimental_rerun()
+                                                    safe_rerun()
                                                 
                                                 # Add refresh button for manual checking
                                                 if refresh_container.button("🔄 Check for Generated Images"):
                                                     with st.spinner("Checking for completed images..."):
                                                         if check_generated_images():
                                                             status_container.success("✨ Image ready!")
-                                                            st.experimental_rerun()
+                                                            safe_rerun()
                                                         else:
                                                             status_container.warning(f"⏳ Still generating your image{'s' if len(urls) > 1 else ''}... Please check again in a moment.")
                                 except Exception as e:
@@ -660,7 +801,11 @@ def main():
             
             with col2:
                 if st.session_state.edited_image:
-                    st.image(st.session_state.edited_image, caption="Edited Image", use_column_width=True)
+                    st.markdown('<div class="card">', unsafe_allow_html=True)
+                    st.markdown('<h4 style="margin:0">✨ Edited Image</h4>', unsafe_allow_html=True)
+                    st.markdown('<div class="image-wrap">', unsafe_allow_html=True)
+                    st.image(st.session_state.edited_image, caption="Edited Image", use_container_width=True)
+                    st.markdown('</div>', unsafe_allow_html=True)
                     image_data = download_image(st.session_state.edited_image)
                     if image_data:
                         st.download_button(
@@ -669,6 +814,7 @@ def main():
                             "edited_product.png",
                             "image/png"
                         )
+                    st.markdown('</div>', unsafe_allow_html=True)
                 elif st.session_state.pending_urls:
                     st.info("Images are being generated. Click the refresh button above to check if they're ready.")
 
@@ -681,35 +827,35 @@ def main():
         if uploaded_file:
             # Create columns for original image and canvas
             col1, col2 = st.columns(2)
-            
+
             with col1:
                 # Display original image
-                st.image(uploaded_file, caption="Original Image", use_column_width=True)
-                
+                st.image(uploaded_file, caption="Original Image", use_container_width=True)
+
                 # Get image dimensions for canvas
                 img = Image.open(uploaded_file)
                 img_width, img_height = img.size
-                
+
                 # Calculate aspect ratio and set canvas height
                 aspect_ratio = img_height / img_width
                 canvas_width = min(img_width, 800)  # Max width of 800px
                 canvas_height = int(canvas_width * aspect_ratio)
-                
+
                 # Resize image to match canvas dimensions
                 img = img.resize((canvas_width, canvas_height))
-                
+
                 # Convert to RGB if necessary
                 if img.mode != 'RGB':
                     img = img.convert('RGB')
-                
+
                 # Convert to numpy array with proper shape and type
                 img_array = np.array(img).astype(np.uint8)
-                
+
                 # Add drawing canvas using Streamlit's drawing canvas component
                 stroke_width = st.slider("Brush width", 1, 50, 20)
                 stroke_color = st.color_picker("Brush color", "#fff")
                 drawing_mode = "freedraw"
-                
+
                 # Create canvas with background image
                 canvas_result = st_canvas(
                     fill_color="rgba(255, 255, 255, 0.0)",  # Transparent fill
@@ -816,7 +962,11 @@ def main():
             
             with col2:
                 if st.session_state.edited_image:
-                    st.image(st.session_state.edited_image, caption="Generated Result", use_column_width=True)
+                    st.markdown('<div class="card">', unsafe_allow_html=True)
+                    st.markdown('<h4 style="margin:0">✨ Generated Result</h4>', unsafe_allow_html=True)
+                    st.markdown('<div class="image-wrap">', unsafe_allow_html=True)
+                    st.image(st.session_state.edited_image, caption="Generated Result", use_container_width=True)
+                    st.markdown('</div>', unsafe_allow_html=True)
                     image_data = download_image(st.session_state.edited_image)
                     if image_data:
                         st.download_button(
@@ -825,6 +975,7 @@ def main():
                             "generated_fill.png",
                             "image/png"
                         )
+                    st.markdown('</div>', unsafe_allow_html=True)
                 elif st.session_state.pending_urls:
                     st.info("Generation in progress. Click the refresh button above to check status.")
 
@@ -839,7 +990,7 @@ def main():
             
             with col1:
                 # Display original image
-                st.image(uploaded_file, caption="Original Image", use_column_width=True)
+                st.image(uploaded_file, caption="Original Image", use_container_width=True)
                 
                 # Get image dimensions for canvas
                 img = Image.open(uploaded_file)
@@ -910,7 +1061,11 @@ def main():
             
             with col2:
                 if st.session_state.edited_image:
-                    st.image(st.session_state.edited_image, caption="Result", use_column_width=True)
+                    st.markdown('<div class="card">', unsafe_allow_html=True)
+                    st.markdown('<h4 style="margin:0">✨ Result</h4>', unsafe_allow_html=True)
+                    st.markdown('<div class="image-wrap">', unsafe_allow_html=True)
+                    st.image(st.session_state.edited_image, caption="Result", use_container_width=True)
+                    st.markdown('</div>', unsafe_allow_html=True)
                     image_data = download_image(st.session_state.edited_image)
                     if image_data:
                         st.download_button(
@@ -920,6 +1075,7 @@ def main():
                             "image/png",
                             key="erase_download"
                         )
+                    st.markdown('</div>', unsafe_allow_html=True)
 
 if __name__ == "__main__":
     main() 

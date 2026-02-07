@@ -27,7 +27,7 @@ def render_uploader():
             return None
         
         # Preview image
-        st.image(file_content, caption="Uploaded Image", use_column_width=True)
+        st.image(file_content, caption="Uploaded Image", use_column_width="auto")
         
         return uploaded_file
         
