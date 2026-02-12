@@ -1,76 +1,129 @@
-# 🎨 Snapify
+.
 
-A powerful Streamlit app for generating professional product ads using Bria AI's advanced image generation and manipulation APIs.
+📸 Snapify
 
-## 🌟 Features
+Snapify is an AI-powered web app that generates professional product advertisement visuals from simple text prompts. It uses cutting-edge generative image APIs along with prompt optimization and background editing to help brands, creators, and marketers quickly produce eye-catching product images.
 
-- 🖼️ Generate HD product images from text prompts
-- 🎯 Remove backgrounds with custom colors
-- 🌅 Add realistic shadows
-- 🏠 Create lifestyle shots with text or reference images
-- ✨ AI-powered prompt enhancement
-- 📝 Optional CTA text overlay
-- 🎮 Intuitive UI controls
-- 💾 Easy image download
+🚀 Features
 
-## 🚀 Quick Start
+✨ AI-Driven Product Visual Generation
+Generate high-quality product images from plain text descriptions.
 
-1. Clone the repository:
-```bash
-git clone https://github.com/yourusername/snapify.git
-cd snapify
-```
+🧠 Smart Prompt Enhancement
+Boosts your prompt quality to improve visual results using AI prompt-engineering techniques.
 
-2. Install dependencies:
-```bash
+🖼️ Background Removal
+Seamlessly isolates product subjects with a clean background.
+
+🎨 Custom Shadow & Styling
+Add realistic shadows and subtle stylistic effects to enhance professional appeal.
+
+📸 Lifestyle Image Generation
+Place product subjects into ready-to-use lifestyle contexts.
+
+💾 Download Outputs
+Export your final visuals for use in ads, social media, or e-commerce listings.
+
+🛠️ Tech Stack
+🧪 Backend
+
+Python – Core language
+
+Streamlit – App interface & interactive UI
+
+FastAPI – Backend API integration if applicable
+
+🧠 AI & ML
+
+Bria API – Generative image creation & enhancement
+
+Prompt optimization algorithms – Better generation quality
+
+📦 Tools & Libraries
+
+Pydantic – Type validation
+
+Requests – API calls
+
+Environment variables (.env) – Secure API key management
+
+Git & GitHub – Version control
+
+📥 Installation
+
+Clone the repo
+
+git clone https://github.com/Adityax-07/Snapify.git
+cd Snapify
+
+
+Install dependencies
+
 pip install -r requirements.txt
-```
 
-3. Create a `.env` file in the root directory:
-```bash
+
+Create a .env file and add:
+
 BRIA_API_KEY=your_api_key_here
-```
 
-4. Run the app:
-```bash
+
+Run the app
+
 streamlit run app.py
-```
 
-## 💡 Usage
 
-1. Enter a product description or upload an image
-2. Configure generation options in the sidebar:
-   - Enhance prompt with AI
-   - Remove background
-   - Add shadows
-   - Generate lifestyle shots
-3. Adjust advanced settings like background color and shadow intensity
-4. Click "Generate Ad" to create your images
-5. Download the results
+Open the local URL shown in your browser to use Snapify.
 
-## 🔧 Configuration
+🧠 How It Works
 
-The app supports various configuration options through the UI:
+Enter a product description or upload a product image.
 
-- **Prompt Enhancement**: Improve your text prompts with AI
-- **Background Removal**: Remove backgrounds with custom colors
-- **Shadow Effects**: Add realistic shadows with adjustable intensity
-- **Lifestyle Shots**: Place products in context using text or reference images
-- **CTA Text**: Add optional call-to-action text overlays
+The prompt enhancer refines your description for optimal AI generation.
 
-## 🤝 Contributing
+A generative API creates the base visual.
 
-1. Fork the repository
-2. Create your feature branch (`git checkout -b feature/amazing-feature`)
-3. Commit your changes (`git commit -m 'Add amazing feature'`)
-4. Push to the branch (`git push origin feature/amazing-feature`)
-5. Open a Pull Request
+Optional tools apply background removal and stylistic effects.
 
-## 📝 License
+Download your finished product ad.
 
-This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+🧩 Project Structure
+📦 Snapify
+├── app.py                   # Main app entrypoint (Streamlit UI)
+├── requirements.txt         # Dependencies
+├── .env                     # Environment variables (API keys)
+├── utils/                   # Helper utilities (prompt enhancer, API calls)
+├── static/                  # Frontend assets (if any)
+└── LICENSE
 
-## 🙏 Acknowledgments
+📌 Use Cases
 
-- [Bria AI](https://bria.ai) for their powerful image generation APIs
-- [Streamlit](https://streamlit.io) for the amazing web framework 
+✔ E-commerce product photography
+✔ Marketing creatives
+✔ Social media ads
+✔ MVP visuals for startups
+✔ Rapid ad production for small businesses
+
+🤝 Contributing
+
+Contributions are welcome!
+
+Fork the repository
+
+Create a feature branch
+
+git checkout -b feature/your-feature
+
+
+Commit your changes
+
+Open a Pull Request
+
+📝 License
+
+Licensed under MIT License
+
+❤️ Acknowledgements
+
+Bria AI for powerful generative image APIs
+
+Streamlit for interactive app development
